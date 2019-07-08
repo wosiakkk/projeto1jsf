@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<h:head>
+	<title>Olá JSF</title>
+</h:head>
+
+<h:body>
+
+	<h:form>
+		<h:outputLabel value="Teste jsf"></h:outputLabel><br/>
+		Nome:
+		<h:inputText id="campoNome" value="#{pessoaBean.nome}"></h:inputText><br/>
+		Sobrenome:
+		<h:inputText id="campoSobreNome" value="#{pessoaBean.sobrenome}"></h:inputText><br/>
+		Nome Completo:
+		<h:outputText id="nomeCompleto" value="#{pessoaBean.nomeCompleto}"></h:outputText><br/>
+		
+		<h:commandButton value="Botão" action="#{pessoaBean.mostrarNome}"></h:commandButton>
+	</h:form>
+
+</h:body>
+
+
+
+</html>
