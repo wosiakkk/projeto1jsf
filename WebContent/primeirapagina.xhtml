@@ -9,16 +9,19 @@
 
 <h:body>
 
-	<h:form>
-		<h:outputLabel value="Teste jsf"></h:outputLabel><br/>
-		Nome:
-		<h:inputText id="campoNome" value="#{pessoaBean.nome}"></h:inputText><br/>
-		Sobrenome:
-		<h:inputText id="campoSobreNome" value="#{pessoaBean.sobrenome}"></h:inputText><br/>
-		Nome Completo:
-		<h:outputText id="nomeCompleto" value="#{pessoaBean.nomeCompleto}"></h:outputText><br/>
+	<h:form id="formPessoa">
+		<h:outputLabel value="ID: "/>
+		<h:outputText value="#{pessoaBean.pessoa.id}"/><br/>
+		<h:outputLabel value="Nome: " />
+		<h:inputText value="#{pessoaBean.pessoa.nome}" /><br/>
+		<h:outputLabel value="Sobrenome: " />
+		<h:inputText value="#{pessoaBean.pessoa.sobrenome}" /><br/>
+		<h:outputLabel value="Idade: " />
+		<h:inputText value="#{pessoaBean.pessoa.idade}" /><br/>
 		
-		<h:commandButton value="Botão" action="#{pessoaBean.mostrarNome}"></h:commandButton>
+		<h:commandButton value="Novo" action="#{pessoaBean.novo}"/>
+		<h:commandButton value="Salvar" action="#{pessoaBean.salvar}"/>
+		<h:commandButton value="Deletar" action="#{pessoaBean.remove}"/>
 	</h:form>
 
 </h:body>
