@@ -1,5 +1,7 @@
 package br.com.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
@@ -75,14 +77,30 @@ public class DaoGeneric<E> {
 		 * necessário pegar o tipo de classe dele para o sql funcionar(o nome ficar de
 		 * acordo com a tabela do banco, o nome tem que ser simples ou canonico)
 		 */
-		entityManager.createQuery("delete from "+ entidade.getClass().getSimpleName() + " where id = " + id).executeUpdate();
-		
-		
+		entityManager.createQuery("delete from " + entidade.getClass().getSimpleName() + " where id = " + id)
+				.executeUpdate();
+
 		transacao.commit();
 		entityManager.close();
 	}
 
-	/*Um data table é amarrado a uma lista de objetos. O método abaixo gera a lista(genérica).*/
-	
-	
+	/*
+	 * Um data table é amarrado a uma lista de objetos. O método abaixo gera a
+	 * lista(genérica). E como parâmetro uma classe genérica será passada.
+	 */
+	public List<E> getListEntity(Class<E> entidade) {
+		EntityManager entityManager = JpaUtil.getEntityManager();
+		EntityTransaction transacao = entityManager.getTransaction();
+		transacao.begin();
+
+		/*
+		 * sql que ira buscar uma lista. Como o método está genérico será utlizado o
+		 * nome canonical da classe que será por padrão igual a tabela criada pelo JPA
+		 * no BD
+		 */
+		List<E> retorno = entityManager.createQuery("from " + entidade.getName()).getResultList();
+
+		return retorno;
+	}
+
 }

@@ -1,5 +1,9 @@
 package br.com.estudojsf;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -17,6 +21,8 @@ public class PessoaBean {
 	private Pessoa pessoa = new Pessoa();
 	/* instancia do dao genérico */
 	private DaoGeneric<Pessoa> dao = new DaoGeneric<Pessoa>();
+	/* lista de pessoas que será carregada para a tela */
+	private List<Pessoa> pessoas = new ArrayList<Pessoa>();
 
 	/* método para salvar e ser chamado da tela JSF */
 	public String salvar() {
@@ -26,6 +32,7 @@ public class PessoaBean {
 									 * como o étodo merge retorna uma entidade, atribuindo ao mesmo objeto pessoa, o
 									 * jsf preencherá a tela com os dados de pessoas salvos/atualizados.
 									 */
+		carregarPessoas();// recarregando os objetos após atulização no BD
 
 		return "";// jsf exige um retorno, e para ficar na mesma página retornamos uma string
 					// vazia
@@ -41,18 +48,40 @@ public class PessoaBean {
 		pessoa = new Pessoa();
 		return "";
 	}
-	
+
 	public String remove() {
 		dao.deletePorId(pessoa);
-		pessoa = new Pessoa(); //para limpar os dados da tela do obj excluido
+		pessoa = new Pessoa(); // para limpar os dados da tela do obj excluido
+		carregarPessoas();// recarregando os objetos após atulização no BD
 		return "";
 	}
+
 	/* set e get de pessoa */
 	public Pessoa getPessoa() {
 		return pessoa;
 	}
 
+	public List<Pessoa> getPessoas() {
+		return pessoas;
+	}
+
 	public void setPessoa(Pessoa pessoa) {
 		this.pessoa = pessoa;
+	}
+
+	/*
+	 * Com a anotação Posconstruct, sempre que a tela for aberta e o Managed Bean
+	 * for instanciado, após ele ser cirado em memória, ele vai carregar o método
+	 * anotado
+	 */
+	@PostConstruct
+	public void carregarPessoas() {
+		/*
+		 * carregando a lista genérica passando como objetos a serem retornados da
+		 * classe Pessoa por parâmetro. Esse método sempre vai ser chamado quando houver
+		 * alteração no BD, por isso ele é add nos métodos de salvar e delete desse
+		 * managedBean
+		 */
+		pessoas = dao.getListEntity(Pessoa.class);
 	}
 }
