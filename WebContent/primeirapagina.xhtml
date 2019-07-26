@@ -5,7 +5,7 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 <h:head>
-	<title>Olá JSF</title>
+	<title>Cadastro de Usuário</title>
 </h:head>
 
 <h:body>
@@ -16,7 +16,7 @@
 	<h:form id="formPessoa">
 		<h:panelGrid columns="2">
 			<f:facet name="header">
-				<h:outputText value="Cadastro em JSF"/>
+				<h:outputText value="Cadastro de Usuário"/>
 			</f:facet>
 			<h:outputLabel value="ID: "/>
 			<h:outputText value="#{pessoaBean.pessoa.id}"/>
@@ -39,18 +39,36 @@
 				<f:selectItem itemValue="Primefaces"/>
 				<f:selectItem itemValue="JSF"/>
 			</h:selectManyMenu>
+			
+			<h:outputLabel value="Ativo:" />
+			<h:selectBooleanCheckbox value="#{pessoaBean.pessoa.ativo}" />
+			
+			<h:outputLabel value="Login"/>
+			<h:inputText value="#{pessoaBean.pessoa.login}"/>
+			
+			<h:outputLabel value="Senha"/>
+			<h:inputSecret value="#{pessoaBean.pessoa.senha}"/>
+			
+			<h:outputLabel value="Perfil" />
+			<h:selectOneMenu id="campoPerfil" value="#{pessoaBean.pessoa.perfilUser}">
+				<f:selectItem itemValue="ADMINISTRADOR" itemLabel="Administrador"/>
+				<f:selectItem itemValue="SECRETARIO" itemLabel="Secretario"/>
+				<f:selectItem itemValue="RECEPCIONISTA" itemLabel="Recepcioninsta"/>
+			</h:selectOneMenu>
+			
 			<h:outputLabel/>
 			<h:panelGroup>
-				<h:commandButton value="Novo" action="#{pessoaBean.novo}"/>
-				<h:commandButton value="Salvar" action="#{pessoaBean.salvar}"/>
-				<h:commandButton value="Deletar" action="#{pessoaBean.remove}"/>
+				<h:commandButton value="Novo" action="#{pessoaBean.novo}" image="/resources/img/new-user.png"/>
+				<h:commandButton value="Salvar" action="#{pessoaBean.salvar}" image="/resources/img/save.png"/>
+				<h:commandButton value="Deletar" action="#{pessoaBean.remove}" image="/resources/img/delete.png"/>
+				<h:commandButton value="Limpar" type="reset"/> <!-- Só baste ter o type reset que o JSF indindtifica e limpa o formulário -->
 			</h:panelGroup>
 		</h:panelGrid>
 		
 		<!-- datatable ira carregar os dados de pessoas -->
 		<h:dataTable value="#{pessoaBean.pessoas}" var="pessoa" border="3" cellpadding="6">
 			<f:facet name="header">
-				<h:outputText value="Lista de Pessoas Cadastradas"/>
+				<h:outputText value="Lista de Usuários Cadastradas"/>
 			</f:facet>
 			<h:column>
 				<f:facet name="header">ID</f:facet>
@@ -66,12 +84,14 @@
 			</h:column>
 			<h:column>
 				<f:facet name="header">Ação</f:facet>
-				<h:commandLink  value="Editar">
+				<h:commandLink >
 					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" /> <!-- Atribui o objeto pessoa, que está na linha da tabela, para o managedbean -->
+					<h:graphicImage value="/resources/img/edit.png" title="Editar"/>
 				</h:commandLink>
 				<h:outputLabel value=" | " />
-				<h:commandLink  value="Excluir" action="#{pessoaBean.remove}">
+				<h:commandLink  action="#{pessoaBean.remove}">
 					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" /> <!-- O processo é o memso do link anterior , com a difenreça que há um action que irá enviar a ação a ser executada para o managed bean -->
+					<h:graphicImage value="/resources/img/delete.png" title="Excluir"/>
 				</h:commandLink>
 			</h:column>
 			

@@ -25,6 +25,11 @@ public class Pessoa implements Serializable {
 	private int idade;
 	private String sexo;
 	private String[] frameworks;
+	private Boolean ativo;
+	private String login;
+	private String senha;
+	private String perfilUser;
+	
 	
 	@Temporal(TemporalType.DATE) //essa anotação diferencia se será salvo só a data, data com hora etc.
 	private Date dataNascimento;
@@ -75,6 +80,31 @@ public class Pessoa implements Serializable {
 	public String[] getFrameworks() {
 		return frameworks;
 	}
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
+	public Boolean getAtivo() {
+		return ativo;
+	}
+	public void setLogin(String login) {
+		this.login = login;
+	}
+	public String getLogin() {
+		return login;
+	}
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+	public String getSenha() {
+		return senha;
+	} 
+	public void setPerfilUser(String perfilUser) {
+		this.perfilUser = perfilUser;
+	}
+	public String getPerfilUser() {
+		return perfilUser;
+	}
+	
 //hashcode e equals ajuda o java e o hibernate a diferenciar objetos
 	@Override
 	public int hashCode() {
