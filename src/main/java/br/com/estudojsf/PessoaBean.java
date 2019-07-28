@@ -6,9 +6,13 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 
 import br.com.dao.DaoGeneric;
 import br.com.entidades.Pessoa;
+import br.com.repository.IDaoPessoa;
+import br.com.repository.IDaoPessoaImpl;
 
 /*Anotação necessária para uma classe se tornar ManagedBean, o atributo nome é por qual ela será invocada.
 /*Este managed bean irá controla Pessoa
@@ -23,7 +27,9 @@ public class PessoaBean {
 	private DaoGeneric<Pessoa> dao = new DaoGeneric<Pessoa>();
 	/* lista de pessoas que será carregada para a tela */
 	private List<Pessoa> pessoas = new ArrayList<Pessoa>();
-
+	/*Criando um objeto da interface implementada para usar o método sobescrito de buscar pessoa*/
+	private IDaoPessoa iDaoPessoa = new IDaoPessoaImpl();
+	
 	/* método para salvar e ser chamado da tela JSF */
 	public String salvar() {
 		// dao.salvar(pessoa); primeiro método feito com persist, que foi alterado para
@@ -83,5 +89,22 @@ public class PessoaBean {
 		 * managedBean
 		 */
 		pessoas = dao.getListEntity(Pessoa.class);
+	}
+	
+	
+	public String logar(){
+		
+		Pessoa pessoaUser = iDaoPessoa.consultarUsuario(pessoa.getLogin(), pessoa.getSenha());
+		
+		if(pessoaUser != null) {//achou a pessoa no BD
+			//adicionando o usuário encontrado na sessão (variável usuarioLogado usada na verificação do filter)
+			//Pegando as informações do jsf em tmepo de execução usando o FacesContext
+			FacesContext context = FacesContext.getCurrentInstance();
+			ExternalContext externalContext = context.getExternalContext();
+			externalContext.getSessionMap().put("usuarioLogado", pessoaUser.getLogin());
+			return "primeirapagina.jsf";
+		}
+		
+		return "index.jsf";
 	}
 }
