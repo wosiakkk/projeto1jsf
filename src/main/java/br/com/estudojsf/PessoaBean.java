@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
@@ -39,9 +40,15 @@ public class PessoaBean {
 									 * jsf preencherá a tela com os dados de pessoas salvos/atualizados.
 									 */
 		carregarPessoas();// recarregando os objetos após atulização no BD
-
+		mostrarMsg("Cadastro Realizado com sucesso!"); //método que irá exibir uma mensagem para o usuário
 		return "";// jsf exige um retorno, e para ficar na mesma página retornamos uma string
 					// vazia
+	}
+
+	private void mostrarMsg(String msg) {
+		FacesContext context = FacesContext.getCurrentInstance();// acessando o contexto do JSF
+		FacesMessage message = new FacesMessage(msg);//setando a mesagem do JSF
+		context.addMessage(null, message);//adicioanndo a mensagem no contexto do JSF que está sendo executado, o parâmetro null é que a mensagem não está associada a nenhum componente JSF
 	}
 
 	/*

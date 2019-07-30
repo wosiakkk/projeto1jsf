@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core">
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui = "http://java.sun.com/jsf/facelets"><!-- tag do jsf para trabalhar com templates da página, com includes de páginas por ex. -->
 
 <h:head>
 	<title>Cadastro de Usuário</title>
@@ -10,18 +11,16 @@
 
 <h:body>
 	
-	<h:form>
-		<h:commandLink value="Administração" action="primeirapagina" style="margin-left:1cm;" />
-		<h:commandLink value="Lançamentos" action="lancamento" style="margin-left:1cm;"  />
-		<h:commandLink value="Trocar Usuário" action="index" style="margin-left:1cm;" />
-	</h:form>
-
+	<ui:include src="/menu.xhtml"/> <!-- inclusão do xhtml do menu que se repete em todas as páginas -->
 
 	<!-- o jsf consegue localizar automaticamente uma pasta com o padrão de nome = resources, com isso não é necessário
 	declarar a imagem no componente da forma comum: <h:graphicImage value="/resources/img/logojsf1.png" height="100" width="100" /> e sim da forma abaixo,
 	informando somente o nome da subpasta img e o nome do arquivo -->
 	<h:graphicImage library="img" name="logojsf1.png" height="100" width="100"/>
 	<h:form id="formPessoa" rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}">
+	
+		<h:messages/> <!-- compenente que exibe mensagens JSF (método definido no PessoaBean) -->
+		
 		<h:panelGrid columns="2">
 			<f:facet name="header">
 				<h:outputText value="Cadastro de Usuário"/>
@@ -34,11 +33,21 @@
 			<h:inputText value="#{pessoaBean.pessoa.sobrenome}" />
 			<h:outputLabel value="Idade: " />
 			<h:inputText value="#{pessoaBean.pessoa.idade}" />
+			
 			<h:outputLabel value="Sexo" />
 			<h:selectOneMenu id="campoSexo" value="#{pessoaBean.pessoa.sexo}">
 				<f:selectItem itemValue="Masculino" itemLabel="Sexo Masculino"/>
 				<f:selectItem itemValue="Feminino" itemLabel="Sexo Feminino"/>
 			</h:selectOneMenu>
+			
+			<h:outputLabel value="Data de Nascimento:" />
+			<h:inputText value="#{pessoaBean.pessoa.dataNascimento}" converterMessage="Data de nascimento inválida!"> <!-- O converterMessage exibe a mensagem caso o 
+			pattern da tag converterDataTime não seja respeitado -->
+				<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" timeZone="GMT-03:00"/> <!-- componente jsf que converte e formata datas. 
+				Importante configurar o locale e timezone para não dar erros nas datas -->
+			</h:inputText>
+			
+			
 			<h:outputLabel value="Frameworks" />
 			<h:selectManyMenu id="campoFrameworks" value="#{pessoaBean.pessoa.frameworks}" style="height:150px">
 				<f:selectItem itemValue="Hibernate"/>

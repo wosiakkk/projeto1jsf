@@ -33,7 +33,7 @@ public class Pessoa implements Serializable {
 	private Integer[] linguagens;
 	
 	@Temporal(TemporalType.DATE) //essa anotação diferencia se será salvo só a data, data com hora etc.
-	private Date dataNascimento;
+	private Date dataNascimento = new Date();
 	
 	public Pessoa() {
 		// TODO Auto-generated constructor stub
