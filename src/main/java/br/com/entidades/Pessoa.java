@@ -29,7 +29,8 @@ public class Pessoa implements Serializable {
 	private String login;
 	private String senha;
 	private String perfilUser;
-	
+	private String nivelProgramador;
+	private Integer[] linguagens;
 	
 	@Temporal(TemporalType.DATE) //essa anotação diferencia se será salvo só a data, data com hora etc.
 	private Date dataNascimento;
@@ -103,6 +104,18 @@ public class Pessoa implements Serializable {
 	}
 	public String getPerfilUser() {
 		return perfilUser;
+	}
+	public void setNivelProgramador(String nivelProgramador) {
+		this.nivelProgramador = nivelProgramador;
+	}
+	public String getNivelProgramador() {
+		return nivelProgramador;
+	}
+	public void setLinguagens(Integer[] linguagens) {
+		this.linguagens = linguagens;
+	}
+	public Integer[] getLinguagens() {
+		return linguagens;
 	}
 	
 //hashcode e equals ajuda o java e o hibernate a diferenciar objetos

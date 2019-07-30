@@ -64,6 +64,24 @@
 				<f:selectItem itemValue="RECEPCIONISTA" itemLabel="Recepcioninsta"/>
 			</h:selectOneMenu>
 			
+			<h:outputLabel value="Nivel de Programador: "/>
+			<h:selectOneRadio value="#{pessoaBean.pessoa.nivelProgramador}" layout="pageDirection">
+				<f:selectItem itemValue="J" itemLabel="Junior"/>
+				<f:selectItem itemValue="P" itemLabel="Pleno"/>
+				<f:selectItem itemValue="S" itemLabel="Senior"/>
+				<f:selectItem itemValue="E" itemLabel="Expecialista"/>
+			</h:selectOneRadio>
+			
+			<h:outputLabel value="Linguagens:" />
+			<h:selectManyCheckbox value="#{pessoaBean.pessoa.linguagens}">
+				<f:selectItem itemValue="1" itemLabel="Java"/>
+				<f:selectItem itemValue="2" itemLabel="PHP"/>
+				<f:selectItem itemValue="3" itemLabel="Pyton"/>
+				<f:selectItem itemValue="4" itemLabel="C#"/>
+				<f:selectItem itemValue="5" itemLabel="Cobol"/>
+			</h:selectManyCheckbox>
+			
+			
 			<h:outputLabel/>
 			<h:panelGroup>
 				<h:commandButton value="Novo" action="#{pessoaBean.novo}" image="/resources/img/new-user.png"/>

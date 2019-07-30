@@ -27,7 +27,7 @@ public class DaoGeneric<E> {
 		 * neste momento o entityManager está preparado para salvar o objeto que foi
 		 * passado como parametro. O método persist apenas salva o objeto no BD
 		 */
-		entityManager.persist(entidade);
+		entityManager.merge(entidade);
 		/* realizando o commit da operação de salvar */
 		transacao.commit();
 		/* fechando o entityManager para essa operação */
