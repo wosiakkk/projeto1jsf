@@ -21,7 +21,7 @@ import br.com.repository.IDaoPessoaImpl;
 @ManagedBean(name = "pessoaBean")
 public class PessoaBean {
 
-	/* objeto que será usado para o cadastro */
+	/* objeto que será usado para o cadastro (Model)*/
 	private Pessoa pessoa = new Pessoa();
 	/* instancia do dao genérico */
 	private DaoGeneric<Pessoa> dao = new DaoGeneric<Pessoa>();
@@ -101,10 +101,21 @@ public class PessoaBean {
 			//Pegando as informações do jsf em tmepo de execução usando o FacesContext
 			FacesContext context = FacesContext.getCurrentInstance();
 			ExternalContext externalContext = context.getExternalContext();
-			externalContext.getSessionMap().put("usuarioLogado", pessoaUser.getLogin());
+			externalContext.getSessionMap().put("usuarioLogado", pessoaUser);
 			return "primeirapagina.jsf";
 		}
 		
 		return "index.jsf";
+	}
+	
+	/*Méotdo que verifica o perfil do usuário, verificando suas permissões de 
+	 * visualização, alterando o atributo dos componentes chamado rendered.*/
+	public boolean permiteAcesso(String acesso) {
+		/*recupera o usuário salvo na sessão*/
+		FacesContext context = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = context.getExternalContext();
+		Pessoa pessoaUser = (Pessoa) externalContext.getSessionMap().get("usuarioLogado");
+		//retornando um boolean no comparativo entre o acesso passado por parâmetro com o do objeto recuperado.
+		return pessoaUser.getPerfilUser().equals(acesso); 
 	}
 }

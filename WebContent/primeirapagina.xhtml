@@ -9,11 +9,19 @@
 </h:head>
 
 <h:body>
+	
+	<h:form>
+		<h:commandLink value="Administração" action="primeirapagina" style="margin-left:1cm;" />
+		<h:commandLink value="Lançamentos" action="lancamento" style="margin-left:1cm;"  />
+		<h:commandLink value="Trocar Usuário" action="index" style="margin-left:1cm;" />
+	</h:form>
+
+
 	<!-- o jsf consegue localizar automaticamente uma pasta com o padrão de nome = resources, com isso não é necessário
 	declarar a imagem no componente da forma comum: <h:graphicImage value="/resources/img/logojsf1.png" height="100" width="100" /> e sim da forma abaixo,
 	informando somente o nome da subpasta img e o nome do arquivo -->
 	<h:graphicImage library="img" name="logojsf1.png" height="100" width="100"/>
-	<h:form id="formPessoa">
+	<h:form id="formPessoa" rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}">
 		<h:panelGrid columns="2">
 			<f:facet name="header">
 				<h:outputText value="Cadastro de Usuário"/>
@@ -82,7 +90,7 @@
 				<f:facet name="header">Sobrenome</f:facet>
 				<h:outputText value="#{pessoa.sobrenome}" />
 			</h:column>
-			<h:column>
+			<h:column rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}"> <!-- Verificação, somente em perfil adiminitrador que esse componente estará visivel. -->
 				<f:facet name="header">Ação</f:facet>
 				<h:commandLink >
 					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" /> <!-- Atribui o objeto pessoa, que está na linha da tabela, para o managedbean -->

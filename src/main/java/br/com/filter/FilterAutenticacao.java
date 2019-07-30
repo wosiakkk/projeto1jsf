@@ -55,7 +55,7 @@ public class FilterAutenticacao implements Filter {
 		if (!url.equalsIgnoreCase("index.jsf") && usuarioLogado == null) {
 			// Como a requisição não tem permissão, o sistema redireciona novamente para o
 			// index
-			RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsf");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsf");
 			dispatcher.forward(request, response);
 			// return vazio necessário para o código não executar mais nada e o dispatcher
 			// ser efeutado

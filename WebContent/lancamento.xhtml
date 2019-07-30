@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<h:head>
+	<title>Lançamento</title>
+</h:head>
+
+<h:body>
+	<h:form>
+		<h:commandLink value="Administração" action="primeirapagina"
+			style="margin-left:1cm;" />
+		<h:commandLink value="Lançamentos" action="lancamento"
+			style="margin-left:1cm;" />
+		<h:commandLink value="Trocar Usuário" action="index"
+			style="margin-left:1cm;" />
+	</h:form>
+
+	<h:form id="formLacamento">
+		<h:form>
+			<h:panelGrid columns="2">
+				<f:facet name="header">
+					<h:outputText value="Cadastro de Lançamento" />
+				</f:facet>
+				<h:outputLabel value="ID:" />
+				<h:inputText value="#{lancamentoBean.lancamento.id}" readonly="true" />
+				
+				<h:outputLabel value="Nota:" />
+				<h:inputText value="#{lancamentoBean.lancamento.numeroNotaFiscal}"/>
+				
+				<h:outputLabel value="Origem:" />
+				<h:inputText value="#{lancamentoBean.lancamento.empresaOrigem}"/>
+				
+				<h:outputLabel value="Destino:" />
+				<h:inputText value="#{lancamentoBean.lancamento.empresaDestino}"/>
+				
+				<h:outputLabel/>
+				<h:panelGroup>
+					<h:commandButton value="Novo" action="#{lancamentoBean.novo}" image="/resources/img/new-user.png"/>
+					<h:commandButton value="Salvar" action="#{lancamentoBean.salvar}" image="/resources/img/save.png"/>
+					<h:commandButton value="Deletar" action="#{lancamentoBean.remove}" image="/resources/img/delete.png"/>
+					<h:commandButton value="Limpar" type="reset"/> <!-- Só baste ter o type reset que o JSF indindtifica e limpa o formulário -->
+				</h:panelGroup>
+			</h:panelGrid>
+			
+			<h:dataTable value="#{lancamentoBean.lancamentos}" var="lancamento" border="3">
+				<f:facet name="header">
+					<h:outputText value="Laçamentos Cadastrados" />
+				</f:facet>
+				<h:column>
+					<f:facet name="header">ID</f:facet>
+					<h:outputLabel value="#{lancamento.id}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Nota Fiscal</f:facet>
+					<h:outputLabel value="#{lancamento.numeroNotaFiscal}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Origem</f:facet>
+					<h:outputLabel value="#{lancamento.empresaOrigem}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Destino</f:facet>
+					<h:outputLabel value="#{lancamento.empresaDestino}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Usuario</f:facet>
+					<h:outputLabel value="#{lancamento.usuario.nome}" />
+				</h:column>
+			</h:dataTable>
+		</h:form>
+	</h:form>
+</h:body>
+
+</html>
