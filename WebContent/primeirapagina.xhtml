@@ -28,7 +28,9 @@
 			<h:outputLabel value="ID: "/>
 			<h:outputText value="#{pessoaBean.pessoa.id}"/>
 			<h:outputLabel value="Nome: " />
-			<h:inputText value="#{pessoaBean.pessoa.nome}" />
+			<h:inputText value="#{pessoaBean.pessoa.nome}" required="true" requiredMessage="Informe o nome do usuário" validatorMessage="Nome tem que ter no minimo 10 e no máximo 50 chars">
+				<f:validateLength minimum="10" maximum="50"/><!-- Validador de tamanho de string -->
+			</h:inputText>
 			<h:outputLabel value="Sobrenome: " />
 			<h:inputText value="#{pessoaBean.pessoa.sobrenome}" />
 			<h:outputLabel value="Idade: " />
@@ -93,46 +95,50 @@
 			
 			<h:outputLabel/>
 			<h:panelGroup>
-				<h:commandButton value="Novo" action="#{pessoaBean.novo}" image="/resources/img/new-user.png"/>
+				<h:commandButton id="botaoNovo" value="Novo" action="#{pessoaBean.novo}" image="/resources/img/new-user.png">
+					<f:ajax execute="botaoNovo" render="@form" /> <!-- Requisição ajax, executa o botão de novo, preenchendo o managed bean e renderizando no formulário as informções -->
+				</h:commandButton>
 				<h:commandButton value="Salvar" action="#{pessoaBean.salvar}" image="/resources/img/save.png"/>
 				<h:commandButton value="Deletar" action="#{pessoaBean.remove}" image="/resources/img/delete.png"/>
-				<h:commandButton value="Limpar" type="reset"/> <!-- Só baste ter o type reset que o JSF indindtifica e limpa o formulário -->
+				<h:commandButton id="botaoLimpar" value="Limpar" action="#{pessoaBean.limpar}">
+					<f:ajax execute="botaoLimpar" render="@form" />
+				</h:commandButton>
 			</h:panelGroup>
 		</h:panelGrid>
-		
+				
+	</h:form >
 		<!-- datatable ira carregar os dados de pessoas -->
-		<h:dataTable value="#{pessoaBean.pessoas}" var="pessoa" border="3" cellpadding="6">
-			<f:facet name="header">
-				<h:outputText value="Lista de Usuários Cadastradas"/>
-			</f:facet>
-			<h:column>
-				<f:facet name="header">ID</f:facet>
-				<h:outputText value="#{pessoa.id}" />
-			</h:column>
-			<h:column>
-				<f:facet name="header">Nome</f:facet>
-				<h:outputText value="#{pessoa.nome}" />
-			</h:column>
-			<h:column>
-				<f:facet name="header">Sobrenome</f:facet>
-				<h:outputText value="#{pessoa.sobrenome}" />
-			</h:column>
-			<h:column rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}"> <!-- Verificação, somente em perfil adiminitrador que esse componente estará visivel. -->
-				<f:facet name="header">Ação</f:facet>
-				<h:commandLink >
-					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" /> <!-- Atribui o objeto pessoa, que está na linha da tabela, para o managedbean -->
-					<h:graphicImage value="/resources/img/edit.png" title="Editar"/>
-				</h:commandLink>
-				<h:outputLabel value=" | " />
-				<h:commandLink  action="#{pessoaBean.remove}">
-					<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" /> <!-- O processo é o memso do link anterior , com a difenreça que há um action que irá enviar a ação a ser executada para o managed bean -->
-					<h:graphicImage value="/resources/img/delete.png" title="Excluir"/>
-				</h:commandLink>
-			</h:column>
-			
-		</h:dataTable>
-		
-	</h:form>
+		<h:form id="formTable">
+			<h:dataTable value="#{pessoaBean.pessoas}" var="pessoa" border="3" cellpadding="6">
+				<f:facet name="header">
+					<h:outputText value="Lista de Usuários Cadastradas"/>
+				</f:facet>
+				<h:column>
+					<f:facet name="header">ID</f:facet>
+					<h:outputText value="#{pessoa.id}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Nome</f:facet>
+					<h:outputText value="#{pessoa.nome}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Sobrenome</f:facet>
+					<h:outputText value="#{pessoa.sobrenome}" />
+				</h:column>
+				<h:column rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}"> <!-- Verificação, somente em perfil adiminitrador que esse componente estará visivel. -->
+					<f:facet name="header">Ação</f:facet>
+					<h:commandLink >
+						<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" /> <!-- Atribui o objeto pessoa, que está na linha da tabela, para o managedbean -->
+						<h:graphicImage value="/resources/img/edit.png" title="Editar"/>
+					</h:commandLink>
+					<h:outputLabel value=" | " />
+					<h:commandLink  action="#{pessoaBean.remove}">
+						<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" /> <!-- O processo é o memso do link anterior , com a difenreça que há um action que irá enviar a ação a ser executada para o managed bean -->
+						<h:graphicImage value="/resources/img/delete.png" title="Excluir"/>
+					</h:commandLink>
+				</h:column>
+			</h:dataTable>
+		</h:form>
 
 </h:body>
 

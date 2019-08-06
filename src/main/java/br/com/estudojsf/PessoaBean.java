@@ -61,6 +61,11 @@ public class PessoaBean {
 		pessoa = new Pessoa();
 		return "";
 	}
+	
+	public String limpar() {
+		pessoa = new Pessoa();
+		return "";
+	}
 
 	public String remove() {
 		dao.deletePorId(pessoa);
