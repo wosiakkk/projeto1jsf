@@ -15,6 +15,9 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.servlet.http.HttpServletRequest;
+
+import com.google.gson.Gson;
 
 import br.com.dao.DaoGeneric;
 import br.com.entidades.Pessoa;
@@ -126,6 +129,20 @@ public class PessoaBean {
 		return "index.jsf";
 	}
 	
+	public String deslogar() {
+		//Removendo o usuário  na sessão (variável usuarioLogado usada na verificação do filter)
+		//Pegando as informações do jsf em tmepo de execução usando o FacesContext
+		FacesContext context = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = context.getExternalContext();
+		externalContext.getSessionMap().remove("usuarioLogado");
+		//invalidando a sessão do usuário
+		HttpServletRequest session = (HttpServletRequest)context.getCurrentInstance().getExternalContext().getRequest();
+		session.getSession().invalidate();
+		
+		return "index.jsf";
+	}
+	
+	
 	/*Méotdo que verifica o perfil do usuário, verificando suas permissões de 
 	 * visualização, alterando o atributo dos componentes chamado rendered.*/
 	public boolean permiteAcesso(String acesso) {
@@ -154,6 +171,19 @@ public class PessoaBean {
 			while((cep = br.readLine()) != null) {
 				jsonCep.append(cep);
 			}
+			/*com os atributos do objeto pessoa estão com o mesmo nome dos atributos do json de retorno do ws, o java consegue associar e jogar os dados
+			 * do json vindo do ws para dentro do objto java gson. Esse objeto é um auxiliar, e os dados deles deve ser repassados (sets) para o objeto pessoa que é
+			 * referente a tela jsf atual, para os dados irem para a tela*/
+			Pessoa gson = new Gson().fromJson(jsonCep.toString(), Pessoa.class);
+			pessoa.setLogradouro(gson.getLogradouro());
+			pessoa.setComplemento(gson.getComplemento());
+			pessoa.setBairro(gson.getBairro());
+			pessoa.setLocalidade(gson.getLocalidade());
+			pessoa.setUf(gson.getUf());
+			pessoa.setUnidade(gson.getUnidade());
+			pessoa.setIbge(gson.getIbge());
+			pessoa.setGia(gson.getGia());
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
