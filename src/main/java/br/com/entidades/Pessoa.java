@@ -31,6 +31,7 @@ public class Pessoa implements Serializable {
 	private String perfilUser;
 	private String nivelProgramador;
 	private Integer[] linguagens;
+	private String cep;
 	
 	@Temporal(TemporalType.DATE) //essa anotação diferencia se será salvo só a data, data com hora etc.
 	private Date dataNascimento = new Date();
@@ -116,6 +117,12 @@ public class Pessoa implements Serializable {
 	}
 	public Integer[] getLinguagens() {
 		return linguagens;
+	}
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+	public String getCep() {
+		return cep;
 	}
 	
 //hashcode e equals ajuda o java e o hibernate a diferenciar objetos

@@ -59,6 +59,14 @@
 				<f:selectItem itemValue="JSF"/>
 			</h:selectManyMenu>
 			
+			<h:outputLabel value="CEP: " />
+			<h:inputText value="#{pessoaBean.pessoa.cep}">
+				<f:ajax event="blur" execute="@this" listener="#{pessoaBean.pesquisaCep}"/> <!-- O ajax sará executado no evento de perda de foco, no caso do JSF é o blur
+				. A ação será no próprio compenente do inputText (this).
+				O listener vai ser o método que será executado para consultar o CEP, com o valor do inputText(@this) -->
+			</h:inputText>
+			
+			
 			<h:outputLabel value="Ativo:" />
 			<h:selectBooleanCheckbox value="#{pessoaBean.pessoa.ativo}" />
 			

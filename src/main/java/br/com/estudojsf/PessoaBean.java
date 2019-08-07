@@ -1,5 +1,10 @@
 package br.com.estudojsf;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +14,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 
 import br.com.dao.DaoGeneric;
 import br.com.entidades.Pessoa;
@@ -130,4 +136,29 @@ public class PessoaBean {
 		//retornando um boolean no comparativo entre o acesso passado por parâmetro com o do objeto recuperado.
 		return pessoaUser.getPerfilUser().equals(acesso); 
 	}
+	
+	//método para responder a requisição ajax do componente JSF. O parâmetro delcarado é necessário para o JSF indentificar o método
+	public void pesquisaCep(AjaxBehaviorEvent event) {
+		//System.out.println("Metodo pesquisa cep chamando CEP: " + pessoa.getCep());
+		/*Obtendo o Json do WS do CEP*/
+		try {
+			URL url = new URL("https://viacep.com.br/ws/"+pessoa.getCep()+"/json/"); //def a url do ws com o CEP do obj
+			URLConnection connection = url.openConnection(); //abrindo conexão para a URL definida
+			InputStream is = connection.getInputStream(); // executando e pegando os dados do retorno
+			BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));//Lendo os dados, lembrando que é importante definir o encode para evitar erros de acentuação
+			
+			/*Jogando o retorno para dentro de uma String, utilizando um loop que lerá cada linha do retorno até o fim (!=null)
+			 * Essa operação será add a um String Builder para montar a string corretamente com os dados lidos*/
+			String cep = "";
+			StringBuilder jsonCep = new StringBuilder();
+			while((cep = br.readLine()) != null) {
+				jsonCep.append(cep);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			mostrarMsg("Erro ao consultar CEP");
+		}
+	}
+	
 }
