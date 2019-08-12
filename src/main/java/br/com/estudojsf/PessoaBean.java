@@ -15,12 +15,16 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.gson.Gson;
 
 import br.com.dao.DaoGeneric;
+import br.com.entidades.Cidades;
+import br.com.entidades.Estados;
 import br.com.entidades.Pessoa;
+import br.com.jpautil.JpaUtil;
 import br.com.repository.IDaoPessoa;
 import br.com.repository.IDaoPessoaImpl;
 
@@ -39,6 +43,10 @@ public class PessoaBean {
 	private List<Pessoa> pessoas = new ArrayList<Pessoa>();
 	/*Criando um objeto da interface implementada para usar o método sobescrito de buscar pessoa*/
 	private IDaoPessoa iDaoPessoa = new IDaoPessoaImpl();
+	//lista de secteItem para preencher o combo de Estados
+	List<SelectItem> estados;
+	// Listas de cidades
+	List<SelectItem> cidades;
 	
 	/* método para salvar e ser chamado da tela JSF */
 	public String salvar() {
@@ -154,7 +162,7 @@ public class PessoaBean {
 		return pessoaUser.getPerfilUser().equals(acesso); 
 	}
 	
-	//método para responder a requisição ajax do componente JSF. O parâmetro delcarado é necessário para o JSF indentificar o método
+	//método para responder a requisição ajax do componente JSF. O parâmetro delcarado é necessário para chamar através do listener
 	public void pesquisaCep(AjaxBehaviorEvent event) {
 		//System.out.println("Metodo pesquisa cep chamando CEP: " + pessoa.getCep());
 		/*Obtendo o Json do WS do CEP*/
@@ -188,6 +196,40 @@ public class PessoaBean {
 		} catch (Exception e) {
 			e.printStackTrace();
 			mostrarMsg("Erro ao consultar CEP");
+		}
+	}
+	
+	//apontando ao jsf a variavél estados, ele ira buscar o método e retornar a lista para a tela
+	public List<SelectItem> getEstados() {
+		estados = iDaoPessoa.listaEstados();
+		return estados;
+	}
+	
+	public List<SelectItem> getCidades() {
+		return cidades;
+	}
+	public void setCidades(List<SelectItem> cidades) {
+		this.cidades = cidades;
+	}
+	
+	public void carregarCidades(AjaxBehaviorEvent event) {
+		//pegando o valor do combo atrave´s do objeto event. O parametro que vem com o valor do combo selecinado é o submittedValue
+		String codigoEstado = (String) event.getComponent().getAttributes().get("submittedValue");
+		//se o código for diferente de null (primeiro valo do combo escrito '--[Selecione]--')
+		if(codigoEstado != null) {
+			//fazendo busca usando o JPA
+			Estados estado = JpaUtil.getEntityManager().find(Estados.class, Long.parseLong(codigoEstado));
+			if(estado != null) {
+				pessoa.setEstados(estado);
+				
+				List<Cidades> cidades = JpaUtil.getEntityManager().createQuery("from Cidades as c where c.estados.id = " + codigoEstado).getResultList();
+						
+				List<SelectItem> selectItemsCidade = new ArrayList<SelectItem>();
+				for (Cidades cidadesLista : cidades) {
+					selectItemsCidade.add(new SelectItem(cidadesLista.getId(), cidadesLista.getNome()));
+				}
+				setCidades(selectItemsCidade);
+			}
 		}
 	}
 	

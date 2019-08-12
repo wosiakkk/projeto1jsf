@@ -1,8 +1,13 @@
 package br.com.repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.model.SelectItem;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
+import br.com.entidades.Estados;
 import br.com.entidades.Pessoa;
 import br.com.jpautil.JpaUtil;
 
@@ -20,6 +25,22 @@ public class IDaoPessoaImpl implements IDaoPessoa {
 		transacao.commit();
 		entityManager.close();
 		return pessoa;
+	}
+
+	@Override
+	public List<SelectItem> listaEstados() {
+		List<SelectItem> selectItems = new ArrayList<SelectItem>();
+		EntityManager entityManager = JpaUtil.getEntityManager();
+		EntityTransaction transacao = entityManager.getTransaction();
+		transacao.begin();
+		List<Estados> estados = entityManager.createQuery("from Estados").getResultList();
+		
+		for (Estados estados2 : estados) {
+			//o id do objeto será carrregado no combo, porém o que será mostrado para o usuário será só a label
+			selectItems.add(new SelectItem(estados2.getId(), estados2.getNome()));
+		}
+		
+		return selectItems;
 	}
 
 }

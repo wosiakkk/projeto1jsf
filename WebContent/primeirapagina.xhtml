@@ -122,6 +122,21 @@
 				<f:selectItem itemValue="5" itemLabel="Cobol"/>
 			</h:selectManyCheckbox>
 			
+			<h:outputLabel value="Estados: " />
+			<h:selectOneMenu value="#{pessoaBean.pessoa.estados}" immediate="true" > <!-- obejto que irá receber a seleção da tela, o param immediate faz o compeonte sem enviado sem passar por validações como as dos formulários -->
+				<!-- Definindo a primeira oppção do combo, e setando ela como não valida para a seleção -->
+				<f:selectItem itemLabel="--[Selecione]--" noSelectionOption="true" />
+				<!-- Carregamento da lista de seleção do BD -->
+				<f:selectItems value="#{pessoaBean.estados}" />
+				<!-- Dispara o ajax quando houver uma troca(selecção de um estado) enviando apenas o valor desse componente e eexecuta o método carregarCidades -->
+				<f:ajax event="change" execute="@this" listener="#{pessoaBean.carregarCidades}" render="comboCidade" />
+			</h:selectOneMenu>
+			
+			<h:outputLabel value="Cidades:  "/>
+			<h:selectOneMenu value="#{pessoaBean.pessoa.cidades}" id="comboCidade">
+			<f:selectItem noSelectionOption="true" itemLabel="--[Selecione]--" />
+				<f:selectItems value="#{pessoaBean.cidades}" />
+			</h:selectOneMenu>
 			
 			<h:outputLabel/>
 			<h:panelGroup>

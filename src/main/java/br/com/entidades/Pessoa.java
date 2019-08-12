@@ -3,12 +3,16 @@ package br.com.entidades;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity  
 public class Pessoa implements Serializable {
@@ -41,6 +45,14 @@ public class Pessoa implements Serializable {
 	private String ibge;
 	private String gia;
 	
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
+	private Cidades cidades;
+	
+	/*Objeto temporário apenas em memória para receber a lista de estados e preencher
+	 * o combo na tela JSF, ele está marcado com @Transient para o hibernate não cria-lo na tabela pessoa do BD
+	 * sendo assi  não fincando persistente */
+	@Transient
+	private Estados estados;
 	
 	@Temporal(TemporalType.DATE) //essa anotação diferencia se será salvo só a data, data com hora etc.
 	private Date dataNascimento = new Date();
@@ -181,7 +193,20 @@ public class Pessoa implements Serializable {
 	public void setGia(String gia) {
 		this.gia = gia;
 	}
+	public void setEstados(Estados estados) {
+		this.estados = estados;
+	}
+	public Estados getEstados() {
+		return estados;
+	}
 
+	public void setCidades(Cidades cidades) {
+		this.cidades = cidades;
+	}
+	public Cidades getCidades() {
+		return cidades;
+	}
+	
 	//hashcode e equals ajuda o java e o hibernate a diferenciar objetos
 	@Override
 	public int hashCode() {
