@@ -36,8 +36,8 @@ public class IDaoPessoaImpl implements IDaoPessoa {
 		List<Estados> estados = entityManager.createQuery("from Estados").getResultList();
 		
 		for (Estados estados2 : estados) {
-			//o id do objeto será carrregado no combo, porém o que será mostrado para o usuário será só a label
-			selectItems.add(new SelectItem(estados2.getId(), estados2.getNome()));
+			//O objeto será carrregado no combo, porém o que será mostrado para o usuário será só a label
+			selectItems.add(new SelectItem(estados2, estados2.getNome()));
 		}
 		
 		return selectItems;

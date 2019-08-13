@@ -123,7 +123,7 @@
 			</h:selectManyCheckbox>
 			
 			<h:outputLabel value="Estados: " />
-			<h:selectOneMenu value="#{pessoaBean.pessoa.estados}" immediate="true" > <!-- obejto que irá receber a seleção da tela, o param immediate faz o compeonte sem enviado sem passar por validações como as dos formulários -->
+			<h:selectOneMenu value="#{pessoaBean.pessoa.estados}" immediate="true" id="comboEstado" converter="estadoConverter"> <!-- obejto que irá receber a seleção da tela, o param immediate faz o compeonte sem enviado sem passar por validações como as dos formulários -->
 				<!-- Definindo a primeira oppção do combo, e setando ela como não valida para a seleção -->
 				<f:selectItem itemLabel="--[Selecione]--" noSelectionOption="true" />
 				<!-- Carregamento da lista de seleção do BD -->
@@ -133,7 +133,7 @@
 			</h:selectOneMenu>
 			
 			<h:outputLabel value="Cidades:  "/>
-			<h:selectOneMenu value="#{pessoaBean.pessoa.cidades}" id="comboCidade">
+			<h:selectOneMenu value="#{pessoaBean.pessoa.cidades}" id="comboCidade" converter="cidadeConverter">
 			<f:selectItem noSelectionOption="true" itemLabel="--[Selecione]--" />
 				<f:selectItems value="#{pessoaBean.cidades}" />
 			</h:selectOneMenu>
@@ -172,7 +172,7 @@
 				</h:column>
 				<h:column rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}"> <!-- Verificação, somente em perfil adiminitrador que esse componente estará visivel. -->
 					<f:facet name="header">Ação</f:facet>
-					<h:commandLink >
+					<h:commandLink action="#{pessoaBean.editar}">
 						<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" /> <!-- Atribui o objeto pessoa, que está na linha da tabela, para o managedbean -->
 						<h:graphicImage value="/resources/img/edit.png" title="Editar"/>
 					</h:commandLink>
