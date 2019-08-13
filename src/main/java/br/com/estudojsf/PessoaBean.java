@@ -1,12 +1,18 @@
 package br.com.estudojsf;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -17,7 +23,10 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.SelectItem;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import com.google.gson.Gson;
 
@@ -28,6 +37,7 @@ import br.com.entidades.Pessoa;
 import br.com.jpautil.JpaUtil;
 import br.com.repository.IDaoPessoa;
 import br.com.repository.IDaoPessoaImpl;
+import javax.xml.bind.*;
 
 /*Anotação necessária para uma classe se tornar ManagedBean, o atributo nome é por qual ela será invocada.
 /*Este managed bean irá controla Pessoa
@@ -51,9 +61,45 @@ public class PessoaBean {
 	List<SelectItem> estados;
 	// Listas de cidades
 	List<SelectItem> cidades;
+	
+	//o Partpega o arquivo selecionado na tela e cria temporariamente no lado do servidor para depois ser possível processa-lo
+	private Part arquivofoto;
 
 	/* método para salvar e ser chamado da tela JSF */
-	public String salvar() {
+	public String salvar() throws IOException{
+		
+		/*Inicio Processar Imagem*/
+			//pegando a imagem em byte
+			byte[] imagemByte = getByte(arquivofoto.getInputStream());
+			//setando no objeto pessoa, salvando a imagem original
+			pessoa.setFotoIconBase64Original(imagemByte);
+			//transoformar em bufferimage
+			BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imagemByte));
+			//pegando o tipo da imagem
+			//se o tipo for igual a 0, o que não tem anda dentro do buffer, pega um valor padrão, senão pega o tipo da imagem mesmo
+			int type = bufferedImage.getType() == 0 ? bufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
+			//miniatura
+			int largura =200; //em pixels
+			int altura = 200;
+			//criar a miniatura
+			BufferedImage resizedImage = new BufferedImage(largura,altura,type);
+			Graphics2D g = resizedImage.createGraphics();
+			g.drawImage(bufferedImage, 0, 0, altura, largura,null);
+			g.dispose();
+			//escrever novamente a imagem em tamanho menor
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			//o content type retorna a string 'image/png' por exemplo. Por isso é preciso quebrar em um array para pegar somente o valor da extensao
+			String extensao = arquivofoto.getContentType().split("\\/")[1];
+			ImageIO.write(resizedImage, extensao, baos);
+			//cabeçalho padrão para iamgem 'data:image/png;base64,'
+			String miniImagem = "data:"+ arquivofoto.getContentType()+";base64,"+ DatatypeConverter.printBase64Binary(baos.toByteArray()) ;
+			//setando miniatura
+			pessoa.setFotoIconBase64(miniImagem);
+			//setando a extensao
+			pessoa.setExtensao(extensao);
+		/*Fim Processar Imagem*/
+		
+		
 		// dao.salvar(pessoa); primeiro método feito com persist, que foi alterado para
 		// merge
 		pessoa = dao.merge(pessoa); /*
@@ -234,6 +280,13 @@ public class PessoaBean {
 	public void setCidades(List<SelectItem> cidades) {
 		this.cidades = cidades;
 	}
+	
+	public Part getArquivofoto() {
+		return arquivofoto;
+	}
+	public void setArquivofoto(Part arquivofoto) {
+		this.arquivofoto = arquivofoto;
+	}
 
 	public void carregarCidades(AjaxBehaviorEvent event) {
 		/*
@@ -279,6 +332,56 @@ public class PessoaBean {
 			setCidades(selectItemsCidade);
 		}
 
+	}
+	
+	/*Método que transforma um inputstream em array de bytes*/
+	private  byte[] getByte(InputStream is) throws IOException{
+		
+		//variavél de controle
+		int len;
+		//tamanho padrão para arquivos
+		int size = 1024;
+		//fluxo de bytes
+		byte[] buf = null;
+		//caso o inputstream seja um instancia de bytearray, deve fazer outro procedimento
+		if(is instanceof ByteArrayInputStream) {
+			//verificando o tamanho do array
+			size = is.available();
+			//criando um buffer do tamanho
+			buf = new byte[size];
+			//a variavel de controle é o conteudo do buffer lido de zero até o tamanho dele
+			len = is.read(buf,0,size);
+		}else {
+			//é uma saida de media em forma de bytes
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			buf = new byte[size];
+			//varrendo o iputstream e escrevendo no array, e ao mesmo que tempo que le, add na variavel de controle
+			while((len = is.read(buf,0,size)) != -1) {
+				bos.write(buf,0,len);
+			}
+			
+			buf = bos.toByteArray();
+		}
+		return buf;
+	}
+	
+	public void download() throws IOException{
+		//pegando o paramatro passado pelo commandlink
+		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		String fileDownloadId = params.get("fileDownloadId");
+		
+		Pessoa pessoa = dao.consultar(Pessoa.class, fileDownloadId);
+		
+		//dando resposta para o navegador
+		HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+		
+		//setar o cabeçalho, tipo tamanho
+		response.addHeader("Content-Disposition", "attachment; filename=download."+pessoa.getExtensao());
+		response.setContentType("application/octet-stream");
+		response.setContentLength(pessoa.getFotoIconBase64Original().length);
+		response.getOutputStream().write(pessoa.getFotoIconBase64Original());
+		response.getOutputStream().flush();
+		FacesContext.getCurrentInstance().responseComplete();
 	}
 
 }

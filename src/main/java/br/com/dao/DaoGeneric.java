@@ -102,5 +102,15 @@ public class DaoGeneric<E> {
 
 		return retorno;
 	}
+	
+	public E consultar(Class<E> entidade, String codigo) {
+		EntityManager entityManager = JpaUtil.getEntityManager();
+		EntityTransaction transacao = entityManager.getTransaction();
+		transacao.begin();
+		E objeto = (E)entityManager.find(entidade, Long.parseLong(codigo));
+		transacao.commit();
+		return objeto;
+
+	}
 
 }

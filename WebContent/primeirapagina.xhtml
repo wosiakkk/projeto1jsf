@@ -19,7 +19,7 @@
 	declarar a imagem no componente da forma comum: <h:graphicImage value="/resources/img/logojsf1.png" height="100" width="100" /> e sim da forma abaixo,
 	informando somente o nome da subpasta img e o nome do arquivo -->
 	<h:graphicImage library="img" name="logojsf1.png" height="100" width="100"/>
-	<h:form id="formPessoa" rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}">
+	<h:form id="formPessoa" enctype="multipart/form-data" rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}">
 	
 		<h:messages/> <!-- compenente que exibe mensagens JSF (método definido no PessoaBean) -->
 		
@@ -29,6 +29,11 @@
 			</f:facet>
 			<h:outputLabel value="ID: "/>
 			<h:outputText value="#{pessoaBean.pessoa.id}"/>
+			
+			<h:outputLabel value="Foto:" />
+			<h:inputFile id="foto" value="#{pessoaBean.arquivofoto}" ></h:inputFile>
+			
+			
 			<h:outputLabel value="Nome: " />
 			<h:inputText value="#{pessoaBean.pessoa.nome}" required="true" requiredMessage="Informe o nome do usuário" validatorMessage="Nome tem que ter no minimo 10 e no máximo 50 chars"
 			pt:placeholder="Primeiro Nome">
@@ -165,6 +170,13 @@
 				<h:column>
 					<f:facet name="header">Nome</f:facet>
 					<h:outputText value="#{pessoa.nome}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Foto</f:facet>
+					<h:commandLink actionListener="#{pessoaBean.download}"> <!-- actionListener não precisa de redirecionar a tela para executar -->
+						<h:graphicImage width="60" height="60" value="#{pessoa.fotoIconBase64}" />
+						<f:param name="fileDownloadId" value="#{pessoa.id}" /><!-- Parametro que sera passado pelo commandlink -->
+					</h:commandLink>
 				</h:column>
 				<h:column>
 					<f:facet name="header">Sobrenome</f:facet>
