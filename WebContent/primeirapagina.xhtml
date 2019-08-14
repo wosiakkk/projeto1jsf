@@ -41,6 +41,10 @@
 			</h:inputText>
 			<h:outputLabel value="Sobrenome: " />
 			<h:inputText value="#{pessoaBean.pessoa.sobrenome}" />
+			<h:outputLabel value="CPF " />
+			<h:inputText value="#{pessoaBean.pessoa.cpf}" />
+			<h:outputLabel value="Titulo de Eleitor " />
+			<h:inputText value="#{pessoaBean.pessoa.tituloEleitoral}" />
 			<h:outputLabel value="Idade: " />
 			<h:inputText value="#{pessoaBean.pessoa.idade}" />
 			
@@ -145,12 +149,12 @@
 			
 			<h:outputLabel/>
 			<h:panelGroup>
-				<h:commandButton id="botaoNovo" value="Novo" action="#{pessoaBean.novo}" image="/resources/img/new-user.png">
+				<h:commandButton id="botaoNovo" value="Novo" action="#{pessoaBean.novo}" image="/resources/img/new-user.png" immediate="true">
 					<f:ajax execute="botaoNovo" render="@form" /> <!-- Requisição ajax, executa o botão de novo, preenchendo o managed bean e renderizando no formulário as informções -->
 				</h:commandButton>
 				<h:commandButton value="Salvar" action="#{pessoaBean.salvar}" image="/resources/img/save.png"/>
-				<h:commandButton value="Deletar" action="#{pessoaBean.remove}" image="/resources/img/delete.png"/>
-				<h:commandButton id="botaoLimpar" value="Limpar" action="#{pessoaBean.limpar}">
+				<h:commandButton value="Deletar" action="#{pessoaBean.remove}" image="/resources/img/delete.png" immediate="true"/>
+				<h:commandButton id="botaoLimpar" value="Limpar" action="#{pessoaBean.limpar}" immediate="true">
 					<f:ajax execute="botaoLimpar" render="@form" />
 				</h:commandButton>
 			</h:panelGroup>
@@ -184,12 +188,12 @@
 				</h:column>
 				<h:column rendered="#{pessoaBean.permiteAcesso('ADMINISTRADOR')}"> <!-- Verificação, somente em perfil adiminitrador que esse componente estará visivel. -->
 					<f:facet name="header">Ação</f:facet>
-					<h:commandLink action="#{pessoaBean.editar}">
+					<h:commandLink action="#{pessoaBean.editar}" immediate="true">
 						<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" /> <!-- Atribui o objeto pessoa, que está na linha da tabela, para o managedbean -->
 						<h:graphicImage value="/resources/img/edit.png" title="Editar"/>
 					</h:commandLink>
 					<h:outputLabel value=" | " />
-					<h:commandLink  action="#{pessoaBean.remove}">
+					<h:commandLink  action="#{pessoaBean.remove}" immediate="true">
 						<f:setPropertyActionListener value="#{pessoa}" target="#{pessoaBean.pessoa}" /> <!-- O processo é o memso do link anterior , com a difenreça que há um action que irá enviar a ação a ser executada para o managed bean -->
 						<h:graphicImage value="/resources/img/delete.png" title="Excluir"/>
 					</h:commandLink>

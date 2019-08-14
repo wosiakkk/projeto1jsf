@@ -16,6 +16,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.br.CPF;
+import org.hibernate.validator.constraints.br.TituloEleitoral;
 
 @Entity  
 public class Pessoa implements Serializable {
@@ -28,8 +36,22 @@ public class Pessoa implements Serializable {
 	private Long id;
 	
 	private String nome;
+	
+	/*A variável sobrenome vai ser validada no lado do servidor utilizando o hibernate-validator e suas anotações.
+	 * Com isso a camada de view não precisa ter validações, como tem no atributo nome da tela. Os pacotes das anotações são
+	 * javax.validation e org.hibernate.validator*/
+	@NotEmpty(message = "Sobrenome deve ser informado.(bean validator)") //anotação que não autoriza campo ser vazio
+	@NotNull(message = "Sobrenome deve ser informado.(bean validator)") //anotação que não autoriza o campo ser nulo.
+	@Size(min=10,max=10, message = "O sobrenome deve ter entre 10 e 50 caracteres")//anotação que valida o tamanho do dado
 	private String sobrenome;
+	@DecimalMin(value = "10", message = "A idade deve ser maior que 10")//validanto tamanho decimais
+	@DecimalMax(value = "50", message = "A idade deve ser menor que 10")
 	private int idade;
+	@CPF(message = "CPF inválido") //valida CPF brasileiro
+	private String cpf;
+	@TituloEleitoral(message = "Titulo Inválido") //valida titulo de eleitor brasileiro
+	private String tituloEleitoral;
+	
 	private String sexo;
 	private String[] frameworks;
 	private Boolean ativo;
@@ -242,6 +264,18 @@ public class Pessoa implements Serializable {
 
 	public void setFotoIconBase64Original(byte[] fotoIconBase64Original) {
 		this.fotoIconBase64Original = fotoIconBase64Original;
+	}
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+	public String getCpf() {
+		return cpf;
+	}
+	public void setTituloEleitoral(String tituloEleitoral) {
+		this.tituloEleitoral = tituloEleitoral;
+	}
+	public String getTituloEleitoral() {
+		return tituloEleitoral;
 	}
 
 	//hashcode e equals ajuda o java e o hibernate a diferenciar objetos
