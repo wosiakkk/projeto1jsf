@@ -36,7 +36,7 @@
 			
 			<h:outputLabel value="Nome: " />
 			<h:inputText value="#{pessoaBean.pessoa.nome}" required="true" requiredMessage="Informe o nome do usuário" validatorMessage="Nome tem que ter no minimo 10 e no máximo 50 chars"
-			pt:placeholder="Primeiro Nome">
+			pt:placeholder="Primeiro Nome" valueChangeListener="#{pessoaBean.mudancaDeValor}">
 				<f:validateLength minimum="10" maximum="50"/><!-- Validador de tamanho de string -->
 			</h:inputText>
 			<h:outputLabel value="Sobrenome: " />
@@ -152,7 +152,7 @@
 				<h:commandButton id="botaoNovo" value="Novo" action="#{pessoaBean.novo}" image="/resources/img/new-user.png" immediate="true">
 					<f:ajax execute="botaoNovo" render="@form" /> <!-- Requisição ajax, executa o botão de novo, preenchendo o managed bean e renderizando no formulário as informções -->
 				</h:commandButton>
-				<h:commandButton value="Salvar" action="#{pessoaBean.salvar}" image="/resources/img/save.png"/>
+				<h:commandButton value="Salvar" action="#{pessoaBean.salvar}" actionListener="#{pessoaBean.registrarLog}" image="/resources/img/save.png"/><!--O actionlistener é chamado antes do action e ele n redireciona a página -->
 				<h:commandButton value="Deletar" action="#{pessoaBean.remove}" image="/resources/img/delete.png" immediate="true"/>
 				<h:commandButton id="botaoLimpar" value="Limpar" action="#{pessoaBean.limpar}" immediate="true">
 					<f:ajax execute="botaoLimpar" render="@form" />

@@ -1,13 +1,26 @@
 package br.com.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 import br.com.jpautil.JpaUtil;
 
-public class DaoGeneric<E> {
+@Named //toda classe que usar injeção de dependencia deve ser anotada com named do pacote javax.inject
+public class DaoGeneric<E> implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
+
+	
+	@Inject //anotação de injeção de dependencia do entitymanager
+	private EntityManager entityManager;
+	@Inject
+	private JpaUtil jpaUtil;
+	
 	/*
 	 * DAO genérico para ser utilizado com JPA e poder manter qualquer tipo de
 	 * objeto(entidades)
@@ -15,7 +28,7 @@ public class DaoGeneric<E> {
 
 	public void salvar(E entidade) {
 		// estabelecendo um entityManager
-		EntityManager entityManager = JpaUtil.getEntityManager();
+		//EntityManager entityManager = JpaUtil.getEntityManager(); NÃO NECESSÁRIO APÓS  O CDI IMPLEMENTADO
 		/*
 		 * estabelecendo um entity transaction, que é necessário para realizar
 		 * transações no BD
@@ -31,7 +44,7 @@ public class DaoGeneric<E> {
 		/* realizando o commit da operação de salvar */
 		transacao.commit();
 		/* fechando o entityManager para essa operação */
-		entityManager.close();
+		//entityManager.close(); NÃO NECESSÁRIO APÓS  O CDI IMPLEMENTADO, O FRMAEWORK IRÁ CONTROLAR ISSO
 	}
 
 	/*
@@ -40,25 +53,25 @@ public class DaoGeneric<E> {
 	 * retorno do tipo E (entidade)
 	 */
 	public E merge(E entidade) {
-		EntityManager entityManager = JpaUtil.getEntityManager();
+		//EntityManager entityManager = JpaUtil.getEntityManager(); NÃO NECESSÁRIO APÓS  O CDI IMPLEMENTADO
 		EntityTransaction transacao = entityManager.getTransaction();
 
 		transacao.begin();
 		E retorno = entityManager.merge(entidade);
 		transacao.commit();
 
-		entityManager.close();
+		//entityManager.close(); NÃO NECESSÁRIO APÓS  O CDI IMPLEMENTADO
 		return retorno;
 	}
 
 	/* método pode dar erro de detached, usaro delete por id */
 	public void delete(E entidade) {
-		EntityManager entityManager = JpaUtil.getEntityManager();
+		//EntityManager entityManager = JpaUtil.getEntityManager(); NÃO NECESSÁRIO APÓS  O CDI IMPLEMENTADO
 		EntityTransaction transacao = entityManager.getTransaction();
 		transacao.begin();
 		entityManager.remove(entidade);
 		transacao.commit();
-		entityManager.close();
+		//entityManager.close(); NÃO NECESSÁRIO APÓS  O CDI IMPLEMENTADO
 	}
 
 	/*
@@ -66,12 +79,13 @@ public class DaoGeneric<E> {
 	 * efetuar o delete
 	 */
 	public void deletePorId(E entidade) {
-		EntityManager entityManager = JpaUtil.getEntityManager();
+		//EntityManager entityManager = JpaUtil.getEntityManager(); NÃO NECESSÁRIO APÓS  O CDI IMPLEMENTADO
 		EntityTransaction transacao = entityManager.getTransaction();
 		transacao.begin();
 
 		// consultando o id da entidade
-		Object id = JpaUtil.getPrimaryKey(entidade);
+		//Object id = JpaUtil.getPrimaryKey(entidade); NÃO CHAMA MAIS ESTATICO, APÓS CDI IMPLEMENTADO
+		Object id = jpaUtil.getPrimaryKey(entidade);
 		/*
 		 * criando a query de delete, lembrando que como o objeto entidade é genérico é
 		 * necessário pegar o tipo de classe dele para o sql funcionar(o nome ficar de
@@ -89,7 +103,7 @@ public class DaoGeneric<E> {
 	 * lista(genérica). E como parâmetro uma classe genérica será passada.
 	 */
 	public List<E> getListEntity(Class<E> entidade) {
-		EntityManager entityManager = JpaUtil.getEntityManager();
+		//EntityManager entityManager = JpaUtil.getEntityManager();  NÃO NECESSÁRIO APÓS  O CDI IMPLEMENTADO
 		EntityTransaction transacao = entityManager.getTransaction();
 		transacao.begin();
 
@@ -104,7 +118,7 @@ public class DaoGeneric<E> {
 	}
 	
 	public E consultar(Class<E> entidade, String codigo) {
-		EntityManager entityManager = JpaUtil.getEntityManager();
+		//EntityManager entityManager = JpaUtil.getEntityManager();  NÃO NECESSÁRIO APÓS  O CDI IMPLEMENTADO
 		EntityTransaction transacao = entityManager.getTransaction();
 		transacao.begin();
 		E objeto = (E)entityManager.find(entidade, Long.parseLong(codigo));

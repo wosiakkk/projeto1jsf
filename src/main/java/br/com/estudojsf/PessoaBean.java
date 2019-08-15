@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -16,17 +17,19 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.component.html.HtmlSelectOneMenu;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import javax.xml.bind.DatatypeConverter;
 
 import com.google.gson.Gson;
 
@@ -36,27 +39,36 @@ import br.com.entidades.Estados;
 import br.com.entidades.Pessoa;
 import br.com.jpautil.JpaUtil;
 import br.com.repository.IDaoPessoa;
-import br.com.repository.IDaoPessoaImpl;
-import javax.xml.bind.*;
 
 /*Anotação necessária para uma classe se tornar ManagedBean, o atributo nome é por qual ela será invocada.
 /*Este managed bean irá controla Pessoa
  * */
-@ViewScoped
-@ManagedBean(name = "pessoaBean")
-public class PessoaBean {
+//@ViewScoped COMO FOI IMLEMNTADO CDI,A ANOTAÇÃO EQUIVALENTE É DE MESMO NOME, FICAR ATENDO AO PACOTE DE IMPORTAÇÃO(VIEW)!
+//@ManagedBean(name = "pessoaBean") COMO FOI IMLEMNTADO CDI,A ANOTAÇÃO EQUIVALENTE AO MANAGEDBEAN É O NAMED
+@javax.faces.view.ViewScoped
+@Named(value = "pessoaBean")
+public class PessoaBean implements Serializable{
+	private static final long serialVersionUID = 1L;
 
+	//CDI
+	@Inject
+	private JpaUtil jpaUtil;
+	
 	/* objeto que será usado para o cadastro (Model) */
 	private Pessoa pessoa = new Pessoa();
 	/* instancia do dao genérico */
-	private DaoGeneric<Pessoa> dao = new DaoGeneric<Pessoa>();
+	//private DaoGeneric<Pessoa> dao = new DaoGeneric<Pessoa>(); COMO O DAO ESTÁ USNADO CDI NÃO PODEMOS INSTANCIAR, PPOIS IRÁ PERDERS TODAS AS INJEÇÕES
+	@Inject
+	private DaoGeneric<Pessoa> dao;
 	/* lista de pessoas que será carregada para a tela */
 	private List<Pessoa> pessoas = new ArrayList<Pessoa>();
 	/*
 	 * Criando um objeto da interface implementada para usar o método sobescrito de
 	 * buscar pessoa
 	 */
-	private IDaoPessoa iDaoPessoa = new IDaoPessoaImpl();
+	//private IDaoPessoa iDaoPessoa = new IDaoPessoaImpl(); COMO O DAO ESTÁ USNADO CDI NÃO PODEMOS INSTANCIAR, PPOIS IRÁ PERDERS TODAS AS INJEÇÕES
+	@Inject
+	private IDaoPessoa iDaoPessoa;
 	// lista de secteItem para preencher o combo de Estados
 	List<SelectItem> estados;
 	// Listas de cidades
@@ -304,7 +316,7 @@ public class PessoaBean {
 		if (estado != null) {
 			pessoa.setEstados(estado);
 
-			List<Cidades> cidades = JpaUtil.getEntityManager()
+			List<Cidades> cidades = jpaUtil.getEntityManager()
 					.createQuery("from Cidades as c where c.estados.id = " + estado.getId()).getResultList();
 
 			List<SelectItem> selectItemsCidade = new ArrayList<SelectItem>();
@@ -316,13 +328,13 @@ public class PessoaBean {
 		}
 	}
 
-	public void editar() {
+	public String editar() {
 
 		if (pessoa.getCidades() != null) {
 			Estados estado = pessoa.getCidades().getEstados();
 			pessoa.setEstados(estado);
 			
-			List<Cidades> cidades = JpaUtil.getEntityManager()
+			List<Cidades> cidades = jpaUtil.getEntityManager()
 					.createQuery("from Cidades as c where c.estados.id = " + estado.getId()).getResultList();
 
 			List<SelectItem> selectItemsCidade = new ArrayList<SelectItem>();
@@ -331,7 +343,7 @@ public class PessoaBean {
 			}
 			setCidades(selectItemsCidade);
 		}
-
+		return "";
 	}
 	
 	/*Método que transforma um inputstream em array de bytes*/
@@ -383,5 +395,13 @@ public class PessoaBean {
 		response.getOutputStream().flush();
 		FacesContext.getCurrentInstance().responseComplete();
 	}
-
+	
+	public void registrarLog() {
+		/*Rotina de gravação de log (não aconselhavel dessa forma, apenas didática para listeners)*/
+	}
+	public void mudancaDeValor(ValueChangeEvent event) {
+		/*Esse evento é capturao ao executar um alterção nos dados no backend e não na view, neste caso só será caputrado após editar uma pessoa e salvar na tela*/
+		System.out.println("Valor antigo: "+ event.getOldValue()); //pega o valor antes da mudança
+		System.out.println("Valor Novo: "+ event.getNewValue());//pega o valor após a mudança
+	}
 }

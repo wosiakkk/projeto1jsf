@@ -2,15 +2,14 @@ package br.com.converter;
 
 import java.io.Serializable;
 
+import javax.enterprise.inject.spi.CDI;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 
 import br.com.entidades.Estados;
-import br.com.jpautil.JpaUtil;
 
 /*O conversor é necessário, pois ao salvar(enviar o formulário) o JSF pega os dados dos formulários
  * e tenta injetar em um objeto de uma classe, o que não seria possível com os comboboxes.
@@ -33,9 +32,10 @@ public class EstadoConverter implements Converter, Serializable {
 		 * Como da tela só virá o cod do estado em string, será necessário uma consulta
 		 * no BD para poder retorna um objeto estado inteiro
 		 */
-		EntityManager entityManager = JpaUtil.getEntityManager();
-		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
+		//EntityManager entityManager = JpaUtil.getEntityManager(); NÃO NECESSÁRIO APÓS CDI
+		EntityManager entityManager = CDI.current().select(EntityManager.class).get(); // EntityManager buscado do escopo do CDI
+		//EntityTransaction transaction = entityManager.getTransaction(); NÃO NECESSÁRIO APÓS CDI
+		//transaction.begin(); NÃO NECESSÁRIO APÓS CDI
 		Estados estado = (Estados) entityManager.find(Estados.class, Long.parseLong(codigoEstado));
 		
 		return estado;

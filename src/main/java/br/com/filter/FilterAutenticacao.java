@@ -2,6 +2,7 @@ package br.com.filter;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -20,13 +21,19 @@ import br.com.jpautil.JpaUtil;
  *  ele irá interceptar as chamadas, no caso do /* ele irá atual em todas as urls do sistema*/
 @WebFilter(urlPatterns = { "/*" })
 public class FilterAutenticacao implements Filter {
+	
+	//Injeção de dependencia
+	@Inject
+	private JpaUtil jpaUtil;
+	
 	/* Métodos sobreescritos da interface Filter */
 	/* A classe também precisa implementar a interface Filter do pacote servlet */
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		// Iniciado quando o servidor é iniciado
 		// Algo interessante em se fazer neste método é já levantar a conexão com o BD
-		JpaUtil.getEntityManager();
+		//JpaUtil.getEntityManager(); NÃO CHAMA DE FORMA ESTATICA MAIS, POIS FOI INJETADO COM CDI
+		jpaUtil.getEntityManager();
 	}
 
 	@Override
